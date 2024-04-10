@@ -1,12 +1,10 @@
 import json
 from datetime import datetime
 from typing import List
-
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy import create_engine, insert, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
-
 from models.modelsData import ProductModel, RequestProducts, Status
 from config import DB_PATH
 from models.modelsDB import product, main_storehouse, storehouse, request
