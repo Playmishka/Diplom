@@ -1,15 +1,9 @@
-import enum
 from datetime import datetime
 from sqlalchemy import MetaData, Integer, String, Column, TIMESTAMP, ForeignKey, Table, JSON
 
+from models.modelsData import Status
+
 metadata = MetaData()
-
-
-class Status(enum.Enum):
-    Wait = 'Wait'
-    Complete = 'Complete'
-
-
 # Таблица всех продуктов.
 product = Table(
     "product",  # Название таблицы
@@ -43,7 +37,7 @@ request = Table(
     Column("id", Integer, primary_key=True),
     Column("products", JSON, nullable=False),
     Column("date", TIMESTAMP, default=datetime.utcnow),
-    Column("status", String, nullable=False)
+    Column("status", String, nullable=False, default=Status.PROCESSING)
 )
 
 # Таблица пользователей.
