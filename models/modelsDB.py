@@ -1,6 +1,6 @@
 import enum
 from datetime import datetime
-from sqlalchemy import MetaData, Integer, String, Column, TIMESTAMP, ForeignKey, Table, JSON, Enum
+from sqlalchemy import MetaData, Integer, String, Column, TIMESTAMP, ForeignKey, Table, JSON
 
 metadata = MetaData()
 
@@ -46,6 +46,7 @@ request = Table(
     Column("status", String, nullable=False)
 )
 
+# Таблица пользователей.
 user = Table(
     "user",
     metadata,
