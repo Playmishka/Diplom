@@ -30,13 +30,20 @@ storehouse = Table(
     Column("count", Integer, nullable=False),
 )
 
-# Таблица заявки
+product_per_request = Table(
+    "product_per_request",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("request_id", Integer, ForeignKey("request.id") ,nullable=False),
+    Column("product", Integer, ForeignKey("product.id"), nullable=False),
+    Column("count", Integer, nullable=False),
+)
+
 request = Table(
     "request",
     metadata,
-    Column("id", Integer, primary_key=True),
-    Column("products", JSON, nullable=False),
-    Column("date", TIMESTAMP, default=datetime.utcnow),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("data", TIMESTAMP, nullable=False, default=datetime.utcnow),
     Column("status", String, nullable=False, default=Status.PROCESSING)
 )
 
