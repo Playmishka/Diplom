@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from routers.products import router as products_router
-from routers.add_products import router as add_products_router
-from routers.requests import router as requests_router
-from routers.storehouse import router as storehouse_router
+from routers.products_rout import router as products_router
+from routers.add_products_rout import router as add_products_router
+from routers.requests_rout import router as requests_router
+from routers.storehouse_rout import router as storehouse_router
 
 app = FastAPI()
 

@@ -35,6 +35,7 @@ class RequestProductsOutputModel(BaseModel):
 
 
 class RequestOutputModel(BaseModel):
+    id: int
     products: List[RequestProductsOutputModel]
     status: str = Field(Status)
     date: datetime
