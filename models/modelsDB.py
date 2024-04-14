@@ -1,9 +1,10 @@
 from datetime import datetime
-from sqlalchemy import MetaData, Integer, String, Column, TIMESTAMP, ForeignKey, Table, JSON
+from sqlalchemy import MetaData, Integer, String, Column, TIMESTAMP, ForeignKey, Table
 
 from models.modelsData import Status
 
 metadata = MetaData()
+
 # Таблица всех продуктов.
 product = Table(
     "product",  # Название таблицы
@@ -34,12 +35,12 @@ product_per_request = Table(
     "product_per_request",
     metadata,
     Column("id", Integer, primary_key=True),
-    Column("request_id", Integer, ForeignKey("request.id") ,nullable=False),
+    Column("request_id", Integer, ForeignKey("request.id"), nullable=False),
     Column("product", Integer, ForeignKey("product.id"), nullable=False),
     Column("count", Integer, nullable=False),
 )
 
-request = Table(
+request: Table = Table(
     "request",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),

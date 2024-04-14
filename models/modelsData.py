@@ -6,7 +6,13 @@ from pydantic import BaseModel, Field
 
 class Status(enum.Enum):
     PROCESSING = 'В процессе'
-    COMPLETED = 'Выполнена'
+    COMPLETED = 'Выполнен'
+
+
+class Storehouse_get(BaseModel):
+    id: int
+    name: str
+    count: int
 
 
 class ProductModel(BaseModel):
