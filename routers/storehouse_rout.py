@@ -1,11 +1,13 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
+
 from DB import get_session, Session
+from auth.jwt_auth import get_current_auth_user
 from models.modelsDB import product, storehouse, main_storehouse
 from models.modelsData import Storehouse_get
 
-router = APIRouter(prefix="/storehouse")
+router = APIRouter(prefix="/storehouse", tags=["Storehouses"], dependencies=[Depends(get_current_auth_user)])
 
 
 def get_storehouse_data(session: Session, storehouse_table):

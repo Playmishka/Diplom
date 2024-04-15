@@ -1,20 +1,20 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List
+from typing import List, Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.security import HTTPBasicCredentials
 from sqlalchemy import insert, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from DB import get_session
+from auth.jwt_auth import get_current_auth_user
 from models.modelsDB import request, product_per_request, product
 from models.modelsData import RequestProducts, RequestOutputModel, RequestProductsOutputModel, Status
 import requests
 
-router = APIRouter(prefix="/requests")
-
-
+router = APIRouter(prefix="/requests", tags=["Requests"], dependencies=[Depends(get_current_auth_user)])
 
 
 @router.post("/create_request/")
@@ -105,4 +105,4 @@ def perform_request(request_id: int, session: Session = Depends(get_session)):
 
     session.execute(update(request).where(request.c.id == request_id).values(status=Status.COMPLETED.value))
     session.commit()
-
+    return {"message": f"Request {request_id} performed."}

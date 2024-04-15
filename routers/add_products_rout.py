@@ -3,9 +3,10 @@ from sqlalchemy import select, insert, update
 from sqlalchemy.orm import Session
 
 from DB import get_session
+from auth.jwt_auth import get_current_auth_user
 from models.modelsDB import product, main_storehouse, storehouse
 
-router = APIRouter(prefix="/add_products")
+router = APIRouter(prefix="/add_products", tags=["Add products"], dependencies=[Depends(get_current_auth_user)])
 
 
 @router.get("/main_storehouse")
@@ -29,7 +30,11 @@ def add_product_main_storehouse(product_id: int, count: int, session: Session = 
 
 
 @router.get("/storehouse")
-def add_product_storehouse(product_id: int, count: int, session: Session = Depends(get_session)):
+def add_product_storehouse(
+        product_id: int,
+        count: int,
+        session: Session = Depends(get_session)
+):
     try:
         name_product = session.execute(select(product).where(product.c.id == product_id)).fetchone().name
         existing_entry = (session.execute(select(main_storehouse).where(main_storehouse.c.product == product_id))
