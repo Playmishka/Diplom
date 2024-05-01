@@ -1,7 +1,6 @@
-from datetime import datetime
 from jwt import InvalidTokenError
 from fastapi import APIRouter, Depends, Form, HTTPException
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials, OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer
 from starlette import status
 
 from auth import utils
@@ -17,6 +16,7 @@ oAuth2_bearer = OAuth2PasswordBearer(tokenUrl="/auth/login")
 class TokenInfo(BaseModel):
     access_token: str
     token_type: str
+    username: str
 
 
 def validate_auth_user_login(
@@ -51,6 +51,7 @@ def auth_user_issue_jwt(
     return {
         "access_token": access_token,
         "token_type": "bearer",
+        "username": _user.username,
     }
 
 
