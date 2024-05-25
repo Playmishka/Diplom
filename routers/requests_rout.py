@@ -1,9 +1,10 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import List, Annotated
+from typing import List
 
+import auth.jwt_auth
+import requests
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.security import HTTPBasicCredentials
 from sqlalchemy import insert, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -12,7 +13,6 @@ from DB import get_session
 from auth.jwt_auth import get_current_auth_user
 from models.modelsDB import request, product_per_request, product
 from models.modelsData import RequestProducts, RequestOutputModel, RequestProductsOutputModel, Status
-import requests
 
 router = APIRouter(prefix="/requests", tags=["Requests"], dependencies=[Depends(get_current_auth_user)])
 
@@ -48,7 +48,8 @@ def get_requests(session: Session = Depends(get_session)):
             request.join(product_per_request).join(product))  # Joining request, product_per_request, and product
 
         result = session.execute(stmt)
-        requests_dict = defaultdict(lambda: {"id": 0, "products": [], "status": "", "date": datetime.now()})
+        requests_dict = defaultdict(lambda: {"id": 0, "products": [], "status": "", "date": datetime.now()
+                                    .strftime("%d-%m-%Y %H:%M:%S")})
         for row in result.fetchall():
             request_id, request_data, request_status, product_id, product_count, product_name = row
             requests_dict[request_id]["id"] = request_id
@@ -98,10 +99,15 @@ def get_processing_requests(session: Session = Depends(get_session)):
 
 
 @router.post("/perform_request")
-def perform_request(request_id: int, session: Session = Depends(get_session)):
+def perform_request(request_id: int, session: Session = Depends(get_session),
+                    token: str = Depends(auth.jwt_auth.oAuth2_bearer)):
     products = session.execute(select(product_per_request).filter(product_per_request.c.request_id == request_id)).all()
     for item in products:
-        requests.get(f"http://127.0.0.1:8000/add_products/storehouse?product_id={item.product}&count={item.count}")
+        response = requests.get(f"http://127.0.0.1:8000/add_products/storehouse",
+                                params={"product_id": item.product, "count": item.count},
+                                headers={"Authorization": f"Bearer {token}"})
+        if response.status_code != 200:
+            return {"message": f"Failed to add products to storehouse for request {request_id}."}
 
     session.execute(update(request).where(request.c.id == request_id).values(status=Status.COMPLETED.value))
     session.commit()

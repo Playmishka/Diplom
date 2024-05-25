@@ -5,6 +5,11 @@ from models.modelsData import Status
 
 metadata = MetaData()
 
+
+def getDateTime():
+    return datetime.utcnow().strftime("%d-%m-%Y %H:%M:%S")
+
+
 # Таблица всех продуктов.
 product = Table(
     "product",  # Название таблицы
@@ -44,7 +49,7 @@ request: Table = Table(
     "request",
     metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("data", TIMESTAMP, nullable=False, default=datetime.utcnow),
+    Column("data", TIMESTAMP, nullable=False, default=getDateTime),
     Column("status", String, nullable=False, default=Status.PROCESSING)
 )
 

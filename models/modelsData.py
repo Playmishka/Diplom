@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 from pathlib import Path
 from typing import List
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, validator
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -41,7 +41,14 @@ class RequestOutputModel(BaseModel):
     id: int
     products: List[RequestProductsOutputModel]
     status: str = Field(Status)
-    date: datetime
+    date: str
+
+    @validator("date", pre=True)
+    def format_date(cls, v):
+        if isinstance(v, datetime):
+            # Форматирование даты и времени в нужный формат
+            return v.strftime("%d.%m.%Y %H:%M:%S")
+        return v
 
 
 class Auth_JWT(BaseModel):
